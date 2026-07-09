@@ -5,9 +5,9 @@ from app.routers.trips import router as trips_router
 
 
 app = FastAPI(
-    title="Zamdaa API",
-    description="Бэкенд для сервиса поиска попутчиков в Бурятии",
-    version="0"
+    title="zamdaa API",
+    description="бэкенд для сервиса поиска попутчиков в Бурятии (возможно, и не только в Бурятии)",
+    version="0.0.0"
 )
 
 app.include_router(users_router)
