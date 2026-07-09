@@ -12,7 +12,6 @@ class User(Base):
     surname: Mapped[str] = mapped_column(String(50), nullable=False)
     patronymic: Mapped[str] = mapped_column(String(50), nullable=True)
     birth_date: Mapped[datetime.date] = mapped_column(Date, nullable=False)
-    login: Mapped[str] = mapped_column(String(30), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
@@ -22,7 +21,10 @@ class User(Base):
 class Location(Base):
     __tablename__ = "locations"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    country: Mapped[str] = mapped_column(String(50), nullable=False)
+    region: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    district: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
 
 class Trip(Base):
     __tablename__ = "trips"
@@ -32,7 +34,7 @@ class Trip(Base):
     to_location_id: Mapped[int] = mapped_column(ForeignKey("locations.id"), nullable=False)
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     seats: Mapped[int] = mapped_column(Integer, nullable=False)
-    date: Mapped[datetime.datetime] = mapped_column(DateTime, nullable=False)
+    date: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     comment: Mapped[str | None] = mapped_column(String, nullable=True)
 
 class TripRequest(Base):

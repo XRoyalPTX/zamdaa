@@ -1,22 +1,43 @@
 from pydantic import BaseModel, field_validator, EmailStr
-import datetime
+from datetime import date, datetime
 
 
 class LocationCreate(BaseModel):
+    country: str = "Россия"
+    region: str | None = None
+    district: str | None = None
     name: str
 
-    @field_validator("name")
+    @field_validator("country", "region", "district", "name")
     @classmethod
-    def format_location_name(cls, value: str) -> str:
+    def format_location_fields(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+            
         clean_value = value.strip()
+        space_words = clean_value.split()
         
-        words = clean_value.split("-")
-        formatted_words = [word.capitalize() for word in words]
-        return "-".join(formatted_words)
+        lowercase_exceptions = {"Район", "Улус", "Поселок", "Село", "Деревня", "Город", "Пгт"}
+        
+        formatted_space_words = []
+        for space_word in space_words:
+            dash_words = space_word.split("-")
+            formatted_dash_words = [w.capitalize() for w in dash_words]
+            word_result = "-".join(formatted_dash_words)
+            
+            if word_result in lowercase_exceptions:
+                word_result = word_result.lower()
+                
+            formatted_space_words.append(word_result)
+            
+        return " ".join(formatted_space_words)
 
 
 class LocationResponse(BaseModel):
     id: int
+    country: str
+    region: str | None 
+    district: str | None
     name: str
 
     model_config = {"from_attributes": True}
@@ -26,8 +47,7 @@ class UserCreate(BaseModel):
     name: str
     surname: str
     patronymic: str | None = None
-    birth_date: datetime.date
-    login: str
+    birth_date: date
     password: str
     email: EmailStr
     phone_number: str
@@ -87,8 +107,7 @@ class UserResponse(BaseModel):
     name: str
     surname: str
     patronymic: str | None = None
-    birth_date: datetime.date
-    login: str
+    birth_date: date
     email: str
     phone_number: str
     is_active: bool
@@ -101,7 +120,7 @@ class TripCreate(BaseModel):
     to_location_id: int
     price: int
     seats: int
-    date: datetime.datetime
+    date: datetime
     comment: str | None = None
 
 
@@ -112,7 +131,7 @@ class TripResponse(BaseModel):
     to_location_id: int
     price: int
     seats: int
-    date: datetime.datetime
+    date: datetime
     comment: str | None = None
 
     model_config = {"from_attributes": True}
