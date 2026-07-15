@@ -7,3 +7,5 @@ pydantic-settings
 alembic
 bcrypt
 email-validator
+PyJWT
+python-multipart

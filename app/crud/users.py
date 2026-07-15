@@ -17,3 +17,15 @@ async def create_user(db: AsyncSession, user_schema: UserCreate):
     await db.commit()
     await db.refresh(db_user)
     return db_user
+
+
+async def get_user_by_phone_number(db: AsyncSession, phone_number: str):
+    query = select(User).where(User.phone_number == phone_number)
+    result = await db.execute(query)
+    return result.scalar_one_or_none()
+
+
+async def get_user_by_id(db: AsyncSession, id: int):
+    query = select(User).where(User.id == id)
+    result = await db.execute(query)
+    return result.scalar_one_or_none()

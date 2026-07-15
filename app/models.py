@@ -13,7 +13,7 @@ class User(Base):
     patronymic: Mapped[str] = mapped_column(String(50), nullable=True)
     birth_date: Mapped[datetime.date] = mapped_column(Date, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
-    email: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    email: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
 

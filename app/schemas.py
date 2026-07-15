@@ -49,8 +49,15 @@ class UserCreate(BaseModel):
     patronymic: str | None = None
     birth_date: date
     password: str
-    email: EmailStr
+    email: EmailStr | None = None
     phone_number: str
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def empty_string_to_none(cls, value: str | None) -> str | None:
+        if value == "":
+            return None
+        return value
 
     @field_validator("name")
     @classmethod
@@ -108,7 +115,7 @@ class UserResponse(BaseModel):
     surname: str
     patronymic: str | None = None
     birth_date: date
-    email: str
+    email: str | None = None
     phone_number: str
     is_active: bool
 
