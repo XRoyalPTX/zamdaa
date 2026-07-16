@@ -103,6 +103,12 @@ async def change_trip_request_status(db: AsyncSession, answer: bool, trip_reques
             status_code=status.HTTP_403_FORBIDDEN,
             detail="У вас нет прав для изменения статуса данной заявки" 
         )
+    
+    if trip_request.status not in ["pending", "rejected"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Можно изменять статус только у заявок, ожидающих подтверждения"
+        )
 
     if answer:
         if trip.seats < trip_request.seats_requested:

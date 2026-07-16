@@ -29,11 +29,15 @@ async def get_current_user(
 
             if user_id is None:
                 raise exception
-
         except jwt.PyJWTError:
             raise exception
         
-        user = await get_user_by_id(db, id=int(user_id))
+        try:
+            id = int(user_id)
+        except ValueError:
+            raise exception
+
+        user = await get_user_by_id(db, id=id)
         if user is None:
             raise exception
         

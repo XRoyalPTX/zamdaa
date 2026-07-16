@@ -1,9 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select
 
 from app.models import Location
 from app.schemas import LocationCreate
-from app.security import hash_password, verify_password
 
 
 async def create_location(db: AsyncSession, location_schema: LocationCreate):

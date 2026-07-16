@@ -16,7 +16,7 @@ class User(Base):
     email: Mapped[str | None] = mapped_column(String(50), nullable=True, unique=True)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=False, unique=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
-    is_stuff: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_staff: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class Location(Base):
