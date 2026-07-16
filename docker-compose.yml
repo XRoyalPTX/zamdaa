@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: joloo-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${db_user}
+      POSTGRES_PASSWORD: ${db_pass}
+      POSTGRES_DB: ${db_name}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: joloo-app
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
