@@ -122,6 +122,14 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserPublicResponse(BaseModel):
+    id: int
+    name: str
+    surname: str
+
+    model_config = {"from_attributes": True}
+
+
 class TripCreate(BaseModel): 
     from_location_id: int
     to_location_id: int
