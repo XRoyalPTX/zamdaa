@@ -19,7 +19,7 @@
 ### 1. Клонирование репозитория и окружение
 Заберите код и создайте файл настроек (если требуется, скопируйте из примера):
 ```bash
-git clone [https://github.com/твоё_имя/joloo.git](https://github.com/твоё_имя/joloo.git)
+git clone [https://github.com/XRoyalPTX/joloo.git](https://github.com/XRoyalPTX/joloo.git)
 cd joloo
 ```
 
