@@ -144,6 +144,9 @@ class TripResponse(BaseModel):
     driver_id: int
     from_location_id: int
     to_location_id: int
+    driver: UserPublicResponse
+    from_location: LocationResponse
+    to_location: LocationResponse
     price: int
     seats: int
     date: datetime
@@ -161,6 +164,8 @@ class TripRequestResponse(BaseModel):
     id: int
     requester_id: int
     trip_id: int
+    requester: UserPublicResponse
+    trip: TripResponse
     seats_requested: int
     status: str
 

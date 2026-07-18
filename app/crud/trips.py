@@ -1,4 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 from sqlalchemy import select, update
 from fastapi import HTTPException, status
 
@@ -7,18 +8,34 @@ from app.schemas import TripCreate, TripRequestCreate
 
 async def create_trip(db: AsyncSession, trip_schema: TripCreate, driver_id: int):
     trip_dict = trip_schema.model_dump()
-
     trip_dict["driver_id"] = driver_id
-
     db_trip = Trip(**trip_dict)
+
     db.add(db_trip)
     await db.commit()
-    await db.refresh(db_trip)
-    return db_trip
+    final_query = (
+        select(Trip)
+        .options(
+            joinedload(Trip.driver),
+            joinedload(Trip.from_location),
+            joinedload(Trip.to_location)
+        )
+        .where(Trip.id == db_trip.id)
+    )
+    
+    final_result = await db.execute(final_query)
+    return final_result.scalar_one()
 
 
 async def get_trips(db: AsyncSession, from_location_id: int | None = None, to_location_id: int | None = None):
-    query = select(Trip)
+    query = (
+        select(Trip)
+        .options(
+            joinedload(Trip.driver),
+            joinedload(Trip.from_location),
+            joinedload(Trip.to_location)
+        )
+    )
 
     if from_location_id is not None:
         query = query.where(Trip.from_location_id == from_location_id)
@@ -73,8 +90,19 @@ async def create_trip_request(db: AsyncSession, trip_request_schema: TripRequest
     db_trip_request = TripRequest(**trip_request_dict)
     db.add(db_trip_request)
     await db.commit()
-    await db.refresh(db_trip_request)
-    return db_trip_request
+    final_query = (
+        select(TripRequest)
+        .options(
+            joinedload(TripRequest.requester),
+            joinedload(TripRequest.trip).joinedload(Trip.driver),
+            joinedload(TripRequest.trip).joinedload(Trip.from_location),
+            joinedload(TripRequest.trip).joinedload(Trip.to_location)
+        )
+        .where(TripRequest.id == db_trip_request.id) 
+    )
+    
+    final_result = await db.execute(final_query)
+    return final_result.scalar_one()
 
 
 async def change_trip_request_status(db: AsyncSession, answer: bool, trip_request_id: int, current_user_id: int):
@@ -132,9 +160,19 @@ async def change_trip_request_status(db: AsyncSession, answer: bool, trip_reques
         trip_request.status = "rejected"
 
     await db.commit()
-    await db.refresh(trip_request)
+    final_query = (
+        select(TripRequest)
+        .options(
+            joinedload(TripRequest.requester),
+            joinedload(TripRequest.trip).joinedload(Trip.driver),
+            joinedload(TripRequest.trip).joinedload(Trip.from_location),
+            joinedload(TripRequest.trip).joinedload(Trip.to_location)
+        )
+        .where(TripRequest.id == trip_request.id) 
+    )
     
-    return trip_request
+    final_result = await db.execute(final_query)
+    return final_result.scalar_one()
 
 
 async def cancel_trip_request(db: AsyncSession, trip_request_id: int, current_user_id: int):
@@ -170,5 +208,16 @@ async def cancel_trip_request(db: AsyncSession, trip_request_id: int, current_us
     trip_request.status = "cancelled"
 
     await db.commit()
-    await db.refresh(trip_request)
-    return trip_request
+    final_query = (
+        select(TripRequest)
+        .options(
+            joinedload(TripRequest.requester),
+            joinedload(TripRequest.trip).joinedload(Trip.driver),
+            joinedload(TripRequest.trip).joinedload(Trip.from_location),
+            joinedload(TripRequest.trip).joinedload(Trip.to_location)
+        )
+        .where(TripRequest.id == trip_request.id) 
+    )
+    
+    final_result = await db.execute(final_query)
+    return final_result.scalar_one()
